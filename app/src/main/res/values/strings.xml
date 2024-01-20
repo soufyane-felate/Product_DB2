@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Felate soufyane (DB001)</string>
+    <string name="id">id :</string>
+    <string name="price">price :</string>
+    <string name="image">image :</string>
+    <string name="name">name :</string>
+</resources>
