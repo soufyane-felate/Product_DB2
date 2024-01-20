@@ -3,6 +3,7 @@ package com.example.felatesoufyanedb001
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -27,6 +28,14 @@ class DataBase(context:Context): SQLiteOpenHelper(context,"DB_Product",null,1) {
             put("image",image)
         }
         return writableDb.insert("info",null,contextValue)
+    }
+    fun checkIfIdExists(id: Int): Boolean {
+        val readableDb = this.readableDatabase
+        val query = "SELECT * FROM info WHERE id = $id"
+        val cursor: Cursor = readableDb.rawQuery(query, null)
+        val exists = cursor.moveToFirst()
+        cursor.close()
+        return exists
     }
     @SuppressLint("Range")
     fun getAllProducts(): List<Product> {

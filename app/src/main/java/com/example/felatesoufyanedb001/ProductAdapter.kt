@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
 class ProductAdapter(
-    private var proList: MutableList<Product>,
+    var proList: MutableList<Product>,
     private val backButtonClickListener: (Product) -> Unit
 ) : RecyclerView.Adapter<ProductAdapter.ProViewHolder>() {
 

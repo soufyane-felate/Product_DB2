@@ -1,11 +1,10 @@
 package com.example.felatesoufyanedb001
-
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import androidx.activity.result.ActivityResultLauncher
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -15,12 +14,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var dbHelper: DataBase
 
-    private val addProductLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                loadDataFromDatabase()
+    private val addProductLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val id = result.data?.getIntExtra("id", -1)
+            val name = result.data?.getStringExtra("name")
+            val price = result.data?.getDoubleExtra("price", -1.0)
+            val image = result.data?.getStringExtra("image")
+
+            if (id != null && name != null && price != null && image != null) {
+                val newProduct = Product(id, name, price, image)
+                productAdapter.proList.add(newProduct)
+                productAdapter.notifyItemInserted(productAdapter.proList.size - 1)
+            } else {
+                Toast.makeText(this, "Error getting data from AddActivity", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +39,9 @@ class MainActivity : AppCompatActivity() {
         addNewButton.setOnClickListener {
             val intent = Intent(this, ActivityAdd::class.java)
             addProductLauncher.launch(intent)
+
+            // Apply slide-in animation
+            overridePendingTransition(R.anim.slide_out_right, R.anim.slide_in_left)
         }
 
         recyclerView = findViewById(R.id.recycler)
@@ -47,6 +59,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadDataFromDatabase() {
         val productList = dbHelper.getAllProducts()
 
-        productAdapter.submitList(productList)
+        productAdapter.proList.addAll(productList)
+        productAdapter.notifyDataSetChanged()
     }
 }
